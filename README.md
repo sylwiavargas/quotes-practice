@@ -19,6 +19,8 @@ If you already have it installed, run the server by: `$ json-server --watch db.j
 
 * use fetch with this url (`http://localhost:3000/quotes?_embed=likes`) to render all the quotes
   * Each quote should have the following structure:
+
+
   ```html
     <li class='quote-card'>
       <blockquote class="blockquote">
@@ -30,6 +32,9 @@ If you already have it installed, run the server by: `$ json-server --watch db.j
       </blockquote>
     </li>
   ```
+
+
+  
   * !!!!!!! HAVE SOME WAY OF TRACKING WHICH QUOTE WE ARE DEALING WITH !!!!!!!!!!
 
 * Delete button will delete from backend and frontend without refreshing

@@ -3,9 +3,10 @@
 
 document.addEventListener('DOMContentLoaded', (event) => {
     let quoteUl = document.querySelector("ul#quote-list")
-    let form = document.querySelector("form")
+    let newForm = document.querySelector("form#new-quote-form")
+    let updateForm = document.querySelector("form#update-quote-form")
     // debugger
-    form.addEventListener("submit", (e) => postQuote(e))
+    newForm.addEventListener("submit", (e) => postQuote(e))
 
     fetch('http://localhost:3000/quotes')  
     .then(response => response.json())  
@@ -80,6 +81,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         let quoteLikeBtn = document.createElement("button")
         let likeBtnSpan = document.createElement("span")
         let quoteDeleteBtn = document.createElement("button")
+        let quoteUpdateBtn = document.createElement("button")
 
         quoteLi.setAttribute("class", "quote-card")
         quoteLi.setAttribute("id", `quote-li-${quoteObj.id}`)
@@ -91,7 +93,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         likeBtnSpan.setAttribute("id", `#quote-like-span-${quoteObj.id}`)
         quoteDeleteBtn.setAttribute("class", "btn-danger")
         quoteDeleteBtn.setAttribute("id", `quote-delete-btn-${quoteObj.id}`)
-
+        quoteUpdateBtn.setAttribute("id", `quote-update-btn-${quoteObj.id}`)
+        
         quoteLi.dataset.id = quoteObj.id
 
         quoteP.innerText = quoteObj.quote
@@ -99,16 +102,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
         quoteLikeBtn.innerText = "Likes:"
         likeBtnSpan.innerText = "0"
         quoteDeleteBtn.innerText = "Delete"
+        quoteUpdateBtn.innerText = "Update"
 
         quoteLi.append(quoteBlockquote)
-        quoteBlockquote.append(quoteP, quoteFooter, quoteBr, quoteLikeBtn, quoteDeleteBtn)
+        quoteBlockquote.append(quoteP, quoteFooter, quoteBr, quoteLikeBtn, quoteDeleteBtn, quoteUpdateBtn)
         quoteLikeBtn.append(likeBtnSpan)
-        
+
         quoteUl.append(quoteLi)
 
         quoteLikeBtn.addEventListener("click", (event) => likeMe(event, quoteObj))
 
         quoteDeleteBtn.addEventListener("click", () => deleteForever(quoteObj))
+
+        quoteUpdateBtn.addEventListener("click", (event) => showForm(quoteObj))
 
         // console.log(quoteLi);
         // console.log(quoteBlockquote);
@@ -136,6 +142,70 @@ document.addEventListener('DOMContentLoaded', (event) => {
             console.log(`goodbye ${quoteObj.id}`)
             }
         )
+    }
+
+    function showForm(quoteObj){
+        // console.log(quoteObj)
+        let form = document.createElement("div")
+        let li = document.getElementById(`quote-li-${quoteObj.id}`)
+
+        form.innerHTML = `
+        <form id="update-quote-form">
+            <div class="form-group">
+            <label for="update-quote">New Quote</label>
+        <input type="text" class="form-control" id="update-quote" value=${quoteObj.quote} name="quote">
+      </div>
+      <div class="form-group">
+        <label for="Author">Author</label>
+        <input type="text" class="form-control" id="author" name="author" value=${quoteObj.author}>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+        `
+        li.append(form)
+        // console.log("it worked")
+
+        let submitForm = document.getElementById(`update-quote-form`)
+        // debugger
+        submitForm.addEventListener("submit", (event) => updateIt(event, quoteObj))
+    }
+
+    function updateIt(event, quoteObj){
+        event.preventDefault();
+        console.log("im here")
+        updateItOnTheBackend(event, quoteObj)
+        .then(updateItOnTheFrontend)
+    }
+
+    function updateItOnTheBackend(event, quoteObj){
+        let data = getData(event)
+        let li = document.getElementById(`quote-li-${quoteObj.id}`)
+        
+        return fetch(`http://localhost:3000/quotes/${quoteObj.id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+    }
+
+    function updateItOnTheFrontend(quoteObj){
+        // debugger
+        console.log("I'm about to update");
+        
+        let form = document.querySelector(`li#quote-li-${quoteObj.id} form`)
+        let p = document.querySelector(`li#quote-li-${quoteObj.id} blockquote p`)
+        let footer = document.querySelector(`li#quote-li-${quoteObj.id} blockquote footer`)
+
+        p.innerText = quoteObj.quote
+        footer.innerText = quoteObj.author
+        console.log("I have updated");
+
+        form.remove()
+
     }
 
     function likeMe(event, quoteObj) {
