@@ -13,8 +13,7 @@ Hello, let's build a simple app that allows us to keep track of our favorite quo
 
 If you don't have `json-server` installed, run `$ npm i -g json-server`.
 
-If you already have it installed, run the server by: `$ json-server --watch
-db.json`.
+If you already have it installed, run the server by: `$ json-server --watch db.json`.
 
 ## Build a simple, Event-driven, JavaScript DOM-modifying application
 
@@ -31,26 +30,21 @@ db.json`.
       </blockquote>
     </li>
   ```
+  * !!!!!!! HAVE SOME WAY OF TRACKING WHICH QUOTE WE ARE DEALING WITH !!!!!!!!!!
 
+* Delete button will delete from backend and frontend without refreshing
 
-<!-- Populate page with quotes with a `GET` request to
-  `http://localhost:3000/quotes?_embed=likes`. The query string in this URL tells 
-  `json-server` to include the likes for a quote in the JSON of the response. You
-  should not use this query string when creating or deleting a quote. -->
-
-
-
-* Submitting the form creates a new quote and adds it to the list of quotes
-  without having to refresh the page. Pessimistic rendering is reccommended.
-
-* Clicking the delete button should delete the respective quote from the
-  API and remove it from the page without having to refresh.
-
-* Clicking the like button will create a like for this particular quote in the
+* Clicking the like button will **create** a like for this particular quote in the
   API and update the number of likes displayed on the page without having to
   refresh.
   * Use a `POST` request to `http://localhost:3000/likes`
-  * The body of the request should be a JSON object containing a key of
+  * The body: JSON object ({quoteId: _integer_ value})
+
+* Form onSubmit creates a new quote and updates both the backend and frontend -- do it pessimistically
+--------------------------------------------------------------------------------
+
+
+
     `quoteId`, with an _integer_ value. Use the ID of the quote you're creating
     the like for — e.g. `{ quoteId: 5 }` to create a like for quote 5. IMPORTANT: 
     if the `quoteID` is a string for some reason (for example, if you've pulled 
